@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Cards Board</title>
+  <!-- Load React and Babel so React code works inside HTML -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body style="margin: 0; padding: 0;">
+
+  <!-- This is where our React app will render -->
+  <div id="root"></div>
+
+  <!-- Note the type="text/babel" - this lets us write React directly in HTML -->
+  <script type="text/babel">
+
+    // 1. The JobCard Component
+    const JobCard = ({ job }) => {
+      return (
+        <div style={styles.card}>
+          {/* Top Section */}
+          <div style={styles.topRow}>
+            <div style={styles.companyInfo}>
+              <div style={styles.logoPlaceholder}>{job.company[0]}</div>
+              <div>
+                <strong style={styles.companyName}>{job.company}</strong>
+                <span style={styles.postedTime}>{job.postedTime}</span>
+              </div>
+            </div>
+            <button style={styles.saveButton}>
+              {job.saved ? 'Saved 🔖' : 'Save 🏳️'}
+            </button>
+          </div>
+
+          {/* Middle Section */}
+          <h3 style={styles.jobTitle}>{job.title}</h3>
+          <div style={styles.tagContainer}>
+            {job.tags.map((tag, index) => (
+              <span key={index} style={styles.tag}>{tag}</span>
+            ))}
+          </div>
+
+          <hr style={styles.divider} />
+
+          {/* Bottom Section */}
+          <div style={styles.bottomRow}>
+            <div>
+              <div style={styles.salary}>{job.salary}</div>
+              <div style={styles.location}>{job.location}</div>
+            </div>
+            <button style={styles.applyButton}>Apply now</button>
+          </div>
+        </div>
+      );
+    };
+
+    // 2. The Mock Data
+    const jobData = [
+      { id: 1, company: 'Amazon', title: 'Senior UI/UX Designer', postedTime: '5 days ago', tags: ['Part-Time', 'Senior Level'], salary: '$120/hr', location: 'Mumbai, India', saved: false },
+      { id: 2, company: 'Google', title: 'Graphic Designer', postedTime: '30 days ago', tags: ['Part-Time', 'Flexible Schedule'], salary: '$150-220k', location: 'Kochi, India', saved: true },
+      { id: 3, company: 'Dribbble', title: 'Senior Motion Designer', postedTime: '18 days ago', tags: ['Contract', 'Remote'], salary: '$85/hr', location: 'Chennai, India', saved: false },
+      { id: 4, company: 'Figma', title: 'UX Designer', postedTime: '5 days ago', tags: ['Full-Time', 'In office'], salary: '$200-250k', location: 'Bangalore, India', saved: true },
+      { id: 5, company: 'Airbnb', title: 'Junior UI/UX Designer', postedTime: '5 days ago', tags: ['Contract', 'Remote'], salary: '$100/hr', location: 'Delhi, India', saved: false },
+      { id: 6, company: 'Apple', title: 'Graphic Designer', postedTime: '5 days ago', tags: ['Full-Time', 'Flexible Schedule'], salary: '$85-120k', location: 'Kerala, India', saved: true },
+    ];
+
+    // 3. Main App Layout
+    function App() {
+      return (
+        <div style={pageStyles.container}>
+          <div style={pageStyles.grid}>
+            {jobData.map((job) => (
+              <JobCard key={job.id} job={job} />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // 4. Styles Definition
+    const styles = {
+      card: {
+        backgroundColor: '#ffffff',
+        borderRadius: '24px',
+        padding: '24px',
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.05)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        width: '100%',
+        boxSizing: 'border-box',
+      },
+      topRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' },
+      companyInfo: { display: 'flex', alignItems: 'center', gap: '12px' },
+      logoPlaceholder: { width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' },
+      companyName: { fontSize: '14px', color: '#1a1a1a' },
+      postedTime: { fontSize: '11px', color: '#8c8c8c', marginLeft: '6px' },
+      saveButton: { border: '1px solid #e0e0e0', backgroundColor: '#fff', borderRadius: '20px', padding: '4px 12px', fontSize: '12px', cursor: 'pointer' },
+      jobTitle: { fontSize: '18px', fontWeight: '700', margin: '0 0 12px 0', color: '#1a1a1a' },
+      tagContainer: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' },
+      tag: { backgroundColor: '#f2f2f2', color: '#555', padding: '6px 12px', borderRadius: '20px', fontSize: '12px' },
+      divider: { border: 'none', borderTop: '1px solid #f0f0f0', margin: '0 0 16px 0' },
+      bottomRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+      salary: { fontSize: '18px', fontWeight: '700', color: '#1a1a1a' },
+      location: { fontSize: '12px', color: '#8c8c8c' },
+      applyButton: { backgroundColor: '#1a1a1a', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '20px', fontWeight: '600', cursor: 'pointer' },
+    };
+
+    const pageStyles = {
+      container: { backgroundColor: '#ededed', minHeight: '100vh', padding: '40px 20px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: 'sans-serif' },
+      grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', maxWidth: '1100px', width: '100%' },
+    };
+
+    // Render Everything to the page
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

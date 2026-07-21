@@ -1,0 +1,44 @@
+import React from 'react';
+import JobCard from './JobCard';
+
+const jobData = [
+  { id: 1, company: 'Amazon', title: 'Senior UI/UX Designer', postedTime: '5 days ago', tags: ['Part-Time', 'Senior Level'], salary: '$120/hr', location: 'Mumbai, India', saved: false },
+  { id: 2, company: 'Google', title: 'Graphic Designer', postedTime: '30 days ago', tags: ['Part-Time', 'Flexible Schedule'], salary: '$150-220k', location: 'Kochi, India', saved: true },
+  { id: 3, company: 'Dribbble', title: 'Senior Motion Designer', postedTime: '18 days ago', tags: ['Contract', 'Remote'], salary: '$85/hr', location: 'Chennai, India', saved: false },
+  { id: 4, company: 'Figma', title: 'UX Designer', postedTime: '5 days ago', tags: ['Full-Time', 'In office'], salary: '$200-250k', location: 'Bangalore, India', saved: true },
+  { id: 5, company: 'Airbnb', title: 'Junior UI/UX Designer', postedTime: '5 days ago', tags: ['Contract', 'Remote'], salary: '$100/hr', location: 'Delhi, India', saved: false },
+  { id: 6, company: 'Apple', title: 'Graphic Designer', postedTime: '5 days ago', tags: ['Full-Time', 'Flexible Schedule'], salary: '$85-120k', location: 'Kerala, India', saved: true },
+];
+
+function App() {
+  return (
+    <div style={pageStyles.container}>
+      <div style={pageStyles.grid}>
+        {jobData.map((job) => (
+          <JobCard key={job.id} job={job} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const pageStyles = {
+  container: {
+    backgroundColor: '#ededed', // Matches the soft grey background in your image
+    minHeight: '100vh',
+    padding: '40px 20px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '24px',
+    maxWidth: '1100px',
+    width: '100%',
+  },
+};
+
+export default App;
