@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 30% 20%, #241b3d 0%, #14101f 45%, #0a0812 100%);
+      font-family: 'Space Grotesk', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+      touch-action: manipulation;
+    }
+
+    .eyebrow {
+      color: #7f5af0;
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #fffffe;
+      font-size: 22px;
+      font-weight: 500;
+      text-align: center;
+      margin: 0 0 22px;
+    }
+
+    .calculator {
+      background: linear-gradient(160deg, #1e1832 0%, #16121f 100%);
+      border: 1px solid rgba(127, 90, 240, 0.25);
+      border-radius: 28px;
+      padding: 24px;
+      width: 320px;
+      box-shadow:
+        0 30px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .display {
+      background: #0a0812;
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin-bottom: 20px;
+      text-align: right;
+      border: 1px solid rgba(127, 90, 240, 0.15);
+      overflow: hidden;
+      min-height: 82px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #previous-operand {
+      font-family: 'JetBrains Mono', monospace;
+      color: #7f5af0;
+      font-size: 14px;
+      min-height: 16px;
+      white-space: nowrap;
+      overflow-x: auto;
+      opacity: 0.8;
+    }
+
+    #current-operand {
+      font-family: 'JetBrains Mono', monospace;
+      color: #fffffe;
+      font-size: 34px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow-x: auto;
+      text-shadow: 0 0 18px rgba(127, 90, 240, 0.35);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 16px;
+      padding: 18px 0;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      background: #241d38;
+      color: #e4e2f2;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover {
+      background: #2d2547;
+    }
+
+    button:active {
+      transform: scale(0.93);
+    }
+
+    .operator {
+      background: rgba(127, 90, 240, 0.15);
+      color: #b8a4ff;
+    }
+
+    .operator:hover {
+      background: rgba(127, 90, 240, 0.28);
+    }
+
+    .equals {
+      background: linear-gradient(135deg, #7f5af0, #5e3fd1);
+      color: #fffffe;
+      box-shadow: 0 6px 20px rgba(127, 90, 240, 0.45);
+    }
+
+    .equals:hover {
+      box-shadow: 0 6px 26px rgba(127, 90, 240, 0.65);
+    }
+
+    .muted {
+      color: #a7a9be;
+      background: #1c1730;
+    }
+
+    .muted:hover {
+      background: #241d3d;
+    }
+  </style>
+</head>
+<body>
+
+  <p class="eyebrow">Basic Calculator</p>
+  <h1>Calculate</h1>
+
+  <div class="calculator">
+    <div class="display">
+      <div id="previous-operand"></div>
+      <div id="current-operand">0</div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="appendSymbol('(')" class="muted">(</button>
+      <button onclick="appendSymbol(')')" class="muted">)</button>
+      <button onclick="appendSymbol('%')" class="muted">%</button>
+      <button onclick="handleClear()" class="muted">CE</button>
+
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <button onclick="appendSymbol('÷')" class="operator">÷</button>
+
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <button onclick="appendSymbol('×')" class="operator">×</button>
+
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <button onclick="appendSymbol('−')" class="operator">−</button>
+
+      <button onclick="appendNumber('0')">0</button>
+      <button onclick="appendNumber('.')">.</button>
+      <button onclick="calculate()" class="equals">=</button>
+      <button onclick="appendSymbol('+')" class="operator">+</button>
+    </div>
+  </div>
+
+  <script>
+    let expression = '';
+    let lastAnswer = 0;
+
+    const currentOperandEl = document.getElementById('current-operand');
+    const previousOperandEl = document.getElementById('previous-operand');
+
+    function updateDisplay() {
+      currentOperandEl.innerText = expression === '' ? '0' : expression;
+      previousOperandEl.innerText = expression === '' ? 'Ans = ' + lastAnswer : '';
+    }
+
+    function appendNumber(number) {
+      expression = expression + number;
+      updateDisplay();
+    }
+
+    function appendSymbol(symbol) {
+      expression = expression + ' ' + symbol + ' ';
+      updateDisplay();
+    }
+
+    function calculate() {
+      if (expression === '') return;
+
+      // Symbols ko JavaScript ke calculation symbols mein badalna
+      let evalString = expression
+        .replaceAll('×', '*')
+        .replaceAll('÷', '/')
+        .replaceAll('−', '-');
+
+      let result;
+      try {
+        result = eval(evalString);
+        if (evalString.includes('/0') && !isFinite(result)) {
+          throw new Error('Divide by zero');
+        }
+      } catch (error) {
+        previousOperandEl.innerText = expression + ' =';
+        currentOperandEl.innerText = 'Error';
+        expression = '';
+        return;
+      }
+
+      previousOperandEl.innerText = expression + ' =';
+      currentOperandEl.innerText = result;
+      lastAnswer = result;
+      expression = result.toString();
+    }
+
+    function handleClear() {
+      expression = '';
+      lastAnswer = 0;
+      updateDisplay();
+    }
+  </script>
+
+</body>
+</html>
