@@ -136,7 +136,6 @@
 
     function Calculator() {
       const [expression, setExpression] = useState('');
-      const [lastAnswer, setLastAnswer] = useState(0);
       const [previousDisplay, setPreviousDisplay] = useState('Ans = 0');
       const [currentDisplay, setCurrentDisplay] = useState('0');
 
@@ -157,20 +156,29 @@
       const calculate = () => {
         if (!expression) return;
 
-        const evalString = expression
+        let evalString = expression
           .replaceAll('×', '*')
           .replaceAll('÷', '/')
           .replaceAll('−', '-');
 
         try {
+          // Fix Percentage (%) Calculation
+          // Case 1: "200 - 10 %" -> "200 - (200 * (10 / 100))"
+          evalString = evalString.replace(/([\d.]+)\s*([+\-*/])\s*([\d.]+)\s*%/g, (match, num1, op, num2) => {
+            return `${num1} ${op} (${num1} * (${num2} / 100))`;
+          });
+
+          // Case 2: Standalone percentage e.g. "50 %" -> "(50 / 100)"
+          evalString = evalString.replace(/([\d.]+)\s*%/g, '($1 / 100)');
+
           const result = eval(evalString);
+
           if (evalString.includes('/0') && !isFinite(result)) {
             throw new Error('Divide by zero');
           }
 
           setPreviousDisplay(`${expression} =`);
           setCurrentDisplay(String(result));
-          setLastAnswer(result);
           setExpression(String(result));
         } catch (error) {
           setPreviousDisplay(`${expression} =`);
@@ -181,7 +189,6 @@
 
       const handleClear = () => {
         setExpression('');
-        setLastAnswer(0);
         setCurrentDisplay('0');
         setPreviousDisplay('Ans = 0');
       };
